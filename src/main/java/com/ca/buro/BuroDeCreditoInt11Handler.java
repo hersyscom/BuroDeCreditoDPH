@@ -99,7 +99,7 @@ public class BuroDeCreditoInt11Handler extends DataProtocol {
 		Transaction t = procesaTransaccion(INTLBuilder.buildRequestINTL11SinAutenticacion(), request.getBodyAsString());
 		request.setBody(convierteTransaccion(t));
 		request.setOperation(t.getName());
-		super.updateRequest(testExec, request);
+		//super.updateRequest(testExec, request);
 		System.out.println(request.getBodyAsString());
 	}
 
@@ -108,7 +108,7 @@ public class BuroDeCreditoInt11Handler extends DataProtocol {
 		Transaction t = procesaTransaccion(INTLBuilder.buildResponseINTL11SinAutenticacion(), response.getBodyAsString());
 		System.out.println("Response before: " + response.getBodyAsString());
 		response.setBody(convierteTransaccion(t));
-		super.updateResponse(testExec, response);
+		response.setBinary(false);
 		System.out.println("Response after: " + response.getBodyAsString());
 	}
 
@@ -117,7 +117,7 @@ public class BuroDeCreditoInt11Handler extends DataProtocol {
 		Transaction t = procesaTransaccion(INTLBuilder.buildResponseINTL11SinAutenticacion(), response.getBodyAsString());
 		System.out.println("Response before: " + response.getBodyAsString());
 		response.setBody(convierteTransaccion(t));
-		super.updateResponse(testExec, response);
+		response.setBinary(false);
 		System.out.println("Response after: " + response.getBodyAsString());
 	}
 	

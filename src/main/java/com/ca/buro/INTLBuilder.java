@@ -13,6 +13,7 @@ public class INTLBuilder {
 	public static Transaccion buildResponseINTL11SinAutenticacion() {
 		Transaccion transaccion = new Transaccion();
 		transaccion.setSegmentos(buildResponseSegmentosINTL11SinAutenticacion());
+		transaccion.setNombre("INTL11SinAutenticacion");
 		return transaccion;
 	}
 	
