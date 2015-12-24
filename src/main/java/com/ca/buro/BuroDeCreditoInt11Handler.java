@@ -114,7 +114,11 @@ public class BuroDeCreditoInt11Handler extends DataProtocol {
 
 	@Override
 	public void updateResponse(TestExec testExec, TransientResponse response) {
+		Transaction t = procesaTransaccion(INTLBuilder.buildResponseINTL11SinAutenticacion(), response.getBodyAsString());
+		System.out.println("Response before: " + response.getBodyAsString());
+		response.setBody(convierteTransaccion(t));
 		super.updateResponse(testExec, response);
+		System.out.println("Response after: " + response.getBodyAsString());
 	}
 	
 	private String convierteTransaccion(Transaction t) {
