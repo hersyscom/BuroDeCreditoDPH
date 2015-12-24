@@ -122,16 +122,16 @@ public class INTLBuilder {
 		Segmento segmento = new Segmento();
 		segmento.setIncluyeEtiquetas(true);
 		segmento.setIdentificador("SeccionPN");
-		Campo[] campos = new Campo[1];
+		Campo[] campos = new Campo[2];
 		
 		campos[0] = new Campo();
 		campos[0].setNombre("PN");
 		campos[0].setLongitud(26);
 		
-//		campos[1] = new Campo();
-//		campos[1].setNombre("00");
-//		campos[1].setLongitud(26);
-//		
+		campos[1] = new Campo();
+		campos[1].setNombre("00");
+		campos[1].setLongitud(26);
+		
 //		campos[2] = new Campo();
 //		campos[2].setNombre("01");
 //		campos[2].setLongitud(26);
