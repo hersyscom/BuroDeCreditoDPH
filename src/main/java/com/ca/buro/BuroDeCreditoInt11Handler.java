@@ -81,7 +81,7 @@ public class BuroDeCreditoInt11Handler extends DataProtocol {
 		if((apuntador.getPosicion() + TAMANO_ETIQUETA) < body.length()) {
 			String etiquetaCampo = body.substring(apuntador.getPosicion(), apuntador.getPosicion() + TAMANO_ETIQUETA);
 			System.out.println("Campo: " + etiquetaCampo);
-			if(campo.getNombre().equalsIgnoreCase(etiquetaCampo)) {
+			if(campo.getNombre().equalsIgnoreCase("Campo-" + etiquetaCampo)) {
 				field = new Field();
 				field.setName(campo.getNombre());
 				int longitud = Integer.parseInt(body.substring(apuntador.getPosicion() + TAMANO_ETIQUETA, apuntador.getPosicion() + TAMANO_ETIQUETA + TAMANO_LONGITUD));
