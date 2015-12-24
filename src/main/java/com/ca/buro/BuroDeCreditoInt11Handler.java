@@ -21,7 +21,7 @@ public class BuroDeCreditoInt11Handler extends DataProtocol {
 	private static final int TAMANO_ETIQUETA = 2;
 	private static final int TAMANO_LONGITUD = 2;
 
-	private static Transaction procesaTransaccion(Transaccion transaccion, String body) {
+	private Transaction procesaTransaccion(Transaccion transaccion, String body) {
 		Transaction transaction = new Transaction();
 		transaction.setName(transaccion.getNombre());
 		Apuntador apuntador = new Apuntador();
@@ -36,7 +36,7 @@ public class BuroDeCreditoInt11Handler extends DataProtocol {
 	}
 	
 	//*******/home/miguel/isban/tcpIsban.raw.xml
-	private static Section procesaSegmento(String body, Segmento segmento, Apuntador apuntador) {
+	private Section procesaSegmento(String body, Segmento segmento, Apuntador apuntador) {
 		Section section = null;
 		Field field = null;
 		if(segmento.isIncluyeEtiquetas()) {
@@ -66,7 +66,7 @@ public class BuroDeCreditoInt11Handler extends DataProtocol {
 		return section;	
 	}
 	
-	private static Field procesaCampoSegmentoSinEtiquetas(String body, Campo campo, Apuntador apuntador) {
+	private Field procesaCampoSegmentoSinEtiquetas(String body, Campo campo, Apuntador apuntador) {
 		Field field = new Field();
 		String valorCampo = body.substring(apuntador.getPosicion(), apuntador.getPosicion() + campo.getLongitud());
 		apuntador.setPosicion(apuntador.getPosicion() + campo.getLongitud());
@@ -75,7 +75,7 @@ public class BuroDeCreditoInt11Handler extends DataProtocol {
 		return field;
 	}
 	
-	private static Field procesaCampoSegmentoConEtiquetas(String body, Campo campo, Apuntador apuntador) {
+	private Field procesaCampoSegmentoConEtiquetas(String body, Campo campo, Apuntador apuntador) {
 		Field field = null;
 		System.out.println("Posicion actual: " + apuntador.getPosicion());
 		if((apuntador.getPosicion() + TAMANO_ETIQUETA) < body.length()) {
@@ -114,7 +114,7 @@ public class BuroDeCreditoInt11Handler extends DataProtocol {
 			super.updateRequest(testExec, request);
 			System.out.println(request.getBodyAsString());
 			
-			request.setBody(sw.toString());
+			//request.setBody(sw.toString());
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
@@ -131,8 +131,9 @@ public class BuroDeCreditoInt11Handler extends DataProtocol {
 	}
 	
 	public static void main(String[] args) {
+		BuroDeCreditoInt11Handler handler = new BuroDeCreditoInt11Handler(); 
 		String stringHeader = "INTL110014000015265000101540001007MX0000ZM11001008VASmuDecICCMX000000000SP01     0000000PN05AVINA0016NO PROPORCIONADO0211ROSA ALICIA0513ROVE521205QWQPA1827 SUR 1111 123 NA0106CENTRO0221ZIHUATANEJO DE AZUETA0306MEXICO0403GRO0505408801001HES05002520002**";
-		Transaction t = procesaTransaccion(INTLBuilder.buildTransaccionINTL11SinAutenticacion(), stringHeader);
+		Transaction t = handler.procesaTransaccion(INTLBuilder.buildTransaccionINTL11SinAutenticacion(), stringHeader);
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(Transaction.class, Section.class);
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();

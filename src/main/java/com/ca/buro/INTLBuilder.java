@@ -18,7 +18,7 @@ public class INTLBuilder {
 	
 	private static Segmento buildSegmentoINTL() {
 		Segmento segmento = new Segmento();
-		segmento.setIdentificador("SECCION-INTL");
+		segmento.setIdentificador("seccionINTL");
 		Campo[] campos = new Campo[17];
 		
 		campos[0] = new Campo();
@@ -96,7 +96,7 @@ public class INTLBuilder {
 	private static Segmento buildSegmentoPN() {
 		Segmento segmento = new Segmento();
 		segmento.setIncluyeEtiquetas(true);
-		segmento.setIdentificador("SECCION-PN");
+		segmento.setIdentificador("SeccionPN");
 		Campo[] campos = new Campo[4];
 		
 		campos[0] = new Campo();
