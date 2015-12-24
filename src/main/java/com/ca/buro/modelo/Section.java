@@ -34,7 +34,7 @@ public class Section {
 	public List<JAXBElement<String>> getField() {
 	    List<JAXBElement<String>> elements = new ArrayList<JAXBElement<String>>();
 	    for(Field field: fields) {
-    		elements.add(new JAXBElement<String>(new QName(field.getName()), String.class, "<![CDATA[" + field.getValue() + "]]>"));
+    		elements.add(new JAXBElement<String>(new QName(field.getName()), String.class, field.getValue()));
 	    }
 	    return elements;
 	}
