@@ -34,9 +34,9 @@ public class INTLBuilder {
 	}
 	
 	private static Segmento[] buildSegmentosINTL11SinAutenticacion() {
-		Segmento[] segmentos = new Segmento[1];
+		Segmento[] segmentos = new Segmento[2];
 		segmentos[0] = buildSegmentoINTL();
-		//segmentos[1] = buildSegmentoPN();
+		segmentos[1] = buildSegmentoPN();
 		return segmentos;
 	}
 	
@@ -122,23 +122,23 @@ public class INTLBuilder {
 		Segmento segmento = new Segmento();
 		segmento.setIncluyeEtiquetas(true);
 		segmento.setIdentificador("SeccionPN");
-		Campo[] campos = new Campo[4];
+		Campo[] campos = new Campo[1];
 		
 		campos[0] = new Campo();
 		campos[0].setNombre("PN");
 		campos[0].setLongitud(26);
 		
-		campos[1] = new Campo();
-		campos[1].setNombre("00");
-		campos[1].setLongitud(26);
-		
-		campos[2] = new Campo();
-		campos[2].setNombre("01");
-		campos[2].setLongitud(26);
-		
-		campos[3] = new Campo();
-		campos[3].setNombre("02");
-		campos[3].setLongitud(26);
+//		campos[1] = new Campo();
+//		campos[1].setNombre("00");
+//		campos[1].setLongitud(26);
+//		
+//		campos[2] = new Campo();
+//		campos[2].setNombre("01");
+//		campos[2].setLongitud(26);
+//		
+//		campos[3] = new Campo();
+//		campos[3].setNombre("02");
+//		campos[3].setLongitud(26);
 		
 		segmento.setCampos(campos);
 		return segmento;
