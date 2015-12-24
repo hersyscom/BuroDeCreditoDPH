@@ -96,7 +96,27 @@ public class BuroDeCreditoInt11Handler extends DataProtocol {
 
 	@Override
 	public void updateRequest(TestExec testExec, Request request) {
-		Transaction t = procesaTransaccion(INTLBuilder.buildTransaccionINTL11SinAutenticacion(), request.getBodyAsString());
+		Transaction t = procesaTransaccion(INTLBuilder.buildRequestINTL11SinAutenticacion(), request.getBodyAsString());
+		request.setBody(convierteTransaccion(t));
+		request.setOperation(t.getName());
+		super.updateRequest(testExec, request);
+		System.out.println(request.getBodyAsString());
+	}
+
+	@Override
+	public void updateResponse(TestExec testExec, Response response) {
+		Transaction t = procesaTransaccion(INTLBuilder.buildResponseINTL11SinAutenticacion(), response.getBodyAsString());
+		response.setBody(convierteTransaccion(t));
+		super.updateResponse(testExec, response);
+	}
+
+	@Override
+	public void updateResponse(TestExec testExec, TransientResponse response) {
+		super.updateResponse(testExec, response);
+	}
+	
+	private String convierteTransaccion(Transaction t) {
+		String xmlBody = null;
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(Transaction.class, Section.class);
 			
@@ -108,32 +128,18 @@ public class BuroDeCreditoInt11Handler extends DataProtocol {
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
 			jaxbMarshaller.marshal(jaxbElement, sw);
-			
-			request.setBody(sw.toString());
-			request.setOperation(t.getName());
-			super.updateRequest(testExec, request);
-			System.out.println(request.getBodyAsString());
-			
-			//request.setBody(sw.toString());
+
+			xmlBody = sw.toString();
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public void updateResponse(TestExec testExec, Response response) {
-		super.updateResponse(testExec, response);
-	}
-
-	@Override
-	public void updateResponse(TestExec testExec, TransientResponse response) {
-		super.updateResponse(testExec, response);
+		return xmlBody;
 	}
 	
 	public static void main(String[] args) {
 		BuroDeCreditoInt11Handler handler = new BuroDeCreditoInt11Handler(); 
 		String stringHeader = "INTL110014000015265000101540001007MX0000ZM11001008VASmuDecICCMX000000000SP01     0000000PN05AVINA0016NO PROPORCIONADO0211ROSA ALICIA0513ROVE521205QWQPA1827 SUR 1111 123 NA0106CENTRO0221ZIHUATANEJO DE AZUETA0306MEXICO0403GRO0505408801001HES05002520002**";
-		Transaction t = handler.procesaTransaccion(INTLBuilder.buildTransaccionINTL11SinAutenticacion(), stringHeader);
+		Transaction t = handler.procesaTransaccion(INTLBuilder.buildRequestINTL11SinAutenticacion(), stringHeader);
 		try {
 			JAXBContext jaxbContext = JAXBContext.newInstance(Transaction.class, Section.class);
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();

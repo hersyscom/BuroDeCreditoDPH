@@ -2,19 +2,26 @@ package com.ca.buro;
 
 public class INTLBuilder {
 
-	public static Transaccion buildTransaccionINTL11SinAutenticacion() {
+	public static Transaccion buildRequestINTL11SinAutenticacion() {
 		Transaccion transaccion = new Transaccion();
-		transaccion.setSegmentos(buildSegmentosINTL11SinAutenticacion());
+		transaccion.setSegmentos(buildRequestSegmentosINTL11SinAutenticacion());
 		//transaccion.setSegmentos(buildTest());
 		transaccion.setNombre("INTL11SinAutenticacion");
 		return transaccion;
 	}
 	
-	private static Segmento[] buildTest() {
+	public static Transaccion buildResponseINTL11SinAutenticacion() {
+		Transaccion transaccion = new Transaccion();
+		transaccion.setSegmentos(buildResponseSegmentosINTL11SinAutenticacion());
+		return transaccion;
+	}
+	
+	private static Segmento[] buildResponseSegmentosINTL11SinAutenticacion() {
 		Segmento[] segmentos = new Segmento[1];
 		segmentos[0] = buildSegmentoTest();
 		return segmentos;
 	}
+
 	
 	private static Segmento buildSegmentoTest() {
 		Segmento segmento = new Segmento();
@@ -33,15 +40,15 @@ public class INTLBuilder {
 		return segmento;
 	}
 	
-	private static Segmento[] buildSegmentosINTL11SinAutenticacion() {
+	private static Segmento[] buildRequestSegmentosINTL11SinAutenticacion() {
 		Segmento[] segmentos = new Segmento[2];
-		segmentos[0] = buildSegmentoINTL();
-		segmentos[1] = buildSegmentoPN();
+		segmentos[0] = buildRequestSegmentoINTL();
+		segmentos[1] = buildRequestSegmentoPN();
 		return segmentos;
 	}
 	
 	
-	private static Segmento buildSegmentoINTL() {
+	private static Segmento buildRequestSegmentoINTL() {
 		Segmento segmento = new Segmento();
 		segmento.setIdentificador("SeccionINTL");
 		Campo[] campos = new Campo[17];
@@ -118,7 +125,7 @@ public class INTLBuilder {
 		return segmento;
 	}
 	
-	private static Segmento buildSegmentoPN() {
+	private static Segmento buildRequestSegmentoPN() {
 		Segmento segmento = new Segmento();
 		segmento.setIncluyeEtiquetas(true);
 		segmento.setIdentificador("SeccionPN");
