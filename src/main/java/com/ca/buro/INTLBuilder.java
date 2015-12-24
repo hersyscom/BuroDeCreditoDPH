@@ -4,8 +4,8 @@ public class INTLBuilder {
 
 	public static Transaccion buildTransaccionINTL11SinAutenticacion() {
 		Transaccion transaccion = new Transaccion();
-		//transaccion.setSegmentos(buildSegmentosINTL11SinAutenticacion());
-		transaccion.setSegmentos(buildTest());
+		transaccion.setSegmentos(buildSegmentosINTL11SinAutenticacion());
+		//transaccion.setSegmentos(buildTest());
 		transaccion.setNombre("INTL11SinAutenticacion");
 		return transaccion;
 	}
@@ -34,9 +34,9 @@ public class INTLBuilder {
 	}
 	
 	private static Segmento[] buildSegmentosINTL11SinAutenticacion() {
-		Segmento[] segmentos = new Segmento[2];
+		Segmento[] segmentos = new Segmento[1];
 		segmentos[0] = buildSegmentoINTL();
-		segmentos[1] = buildSegmentoPN();
+		//segmentos[1] = buildSegmentoPN();
 		return segmentos;
 	}
 	
