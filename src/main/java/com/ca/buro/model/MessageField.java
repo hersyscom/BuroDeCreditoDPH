@@ -1,17 +1,22 @@
-package com.ca.buro.modelo;
+package com.ca.buro.model;
 
-public class Field {
+public class MessageField {
+	
 	private String name;
 	private String value;
+	
 	public String getName() {
 		return name;
 	}
+	
 	public void setName(String name) {
 		this.name = name;
 	}
+	
 	public String getValue() {
 		return value;
 	}
+	
 	public void setValue(String value) {
 		this.value = value;
 	}

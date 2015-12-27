@@ -1,140 +1,43 @@
 package com.ca.buro;
 
+import java.io.StringReader;
 import java.io.StringWriter;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 
-import com.ca.buro.modelo.Field;
-import com.ca.buro.modelo.Section;
-import com.ca.buro.modelo.Transaction;
+import com.ca.buro.model.Message;
+import com.ca.buro.model.MessageField;
+import com.ca.buro.model.RequestMessage;
+import com.ca.buro.model.RequestSection;
+import com.ca.buro.model.ResponseField;
+import com.ca.buro.model.ResponseMessage;
+import com.ca.buro.model.ResponseSection;
 import com.itko.lisa.test.TestExec;
 import com.itko.lisa.vse.stateful.model.Request;
 import com.itko.lisa.vse.stateful.model.Response;
-import com.itko.lisa.vse.stateful.model.TransientResponse;
 import com.itko.lisa.vse.stateful.protocol.DataProtocol;
 
 public class BuroDeCreditoInt11Handler extends DataProtocol {
-	private static final int TAMANO_ETIQUETA = 2;
-	private static final int TAMANO_LONGITUD = 2;
 
-	private Transaction procesaTransaccion(Transaccion transaccion, String body) {
-		Transaction transaction = new Transaction();
-		transaction.setName(transaccion.getNombre());
-		Apuntador apuntador = new Apuntador();
-		Section section;
-		for (Segmento segmento : transaccion.getSegmentos()) {
-			section = procesaSegmento(body, segmento, apuntador);
-			if(section!=null) {
-				transaction.addSection(section);
-			}
-		}
-		return transaction;
-	}
-	
-	//*******/home/miguel/isban/tcpIsban.raw.xml
-	private Section procesaSegmento(String body, Segmento segmento, Apuntador apuntador) {
-		Section section = null;
-		Field field = null;
-		if(segmento.isIncluyeEtiquetas()) {
-			for (Campo campo: segmento.getCampos()) {
-				field = procesaCampoSegmentoConEtiquetas(body, campo, apuntador);
-				if(field != null) {
-					if(section == null) {
-						section = new Section();
-						section.setName(segmento.getIdentificador());
-					}
-					section.addField(field);
-				}
-			}
-
-		} else {
-			for (Campo campo: segmento.getCampos()) {
-				field = procesaCampoSegmentoSinEtiquetas(body, campo, apuntador);
-				if(field != null) {
-					if(section == null) {
-						section = new Section();
-						section.setName(segmento.getIdentificador());
-					}
-					section.addField(field);
-				}
-			}
-		}
-		return section;	
-	}
-	
-	private Field procesaCampoSegmentoSinEtiquetas(String body, Campo campo, Apuntador apuntador) {
-		Field field = new Field();
-		String valorCampo = body.substring(apuntador.getPosicion(), apuntador.getPosicion() + campo.getLongitud());
-		apuntador.setPosicion(apuntador.getPosicion() + campo.getLongitud());
-		field.setName(campo.getNombre());
-		field.setValue(valorCampo);
-		return field;
-	}
-	
-	private Field procesaCampoSegmentoConEtiquetas(String body, Campo campo, Apuntador apuntador) {
-		Field field = null;
-		System.out.println("Posicion actual: " + apuntador.getPosicion());
-		if((apuntador.getPosicion() + TAMANO_ETIQUETA) < body.length()) {
-			String etiquetaCampo = body.substring(apuntador.getPosicion(), apuntador.getPosicion() + TAMANO_ETIQUETA);
-			System.out.println("Campo: " + etiquetaCampo);
-			if(campo.getNombre().equalsIgnoreCase("Campo-" + etiquetaCampo)) {
-				field = new Field();
-				field.setName(campo.getNombre());
-				int longitud = Integer.parseInt(body.substring(apuntador.getPosicion() + TAMANO_ETIQUETA, apuntador.getPosicion() + TAMANO_ETIQUETA + TAMANO_LONGITUD));
-				System.out.println("Longitud: " + longitud);
-				String valorCampo = body.substring(apuntador.getPosicion() + TAMANO_ETIQUETA + TAMANO_LONGITUD, apuntador.getPosicion() + TAMANO_ETIQUETA + TAMANO_LONGITUD + longitud);	
-				apuntador.setPosicion(apuntador.getPosicion() + TAMANO_ETIQUETA + TAMANO_LONGITUD + longitud);
-				field.setValue(valorCampo);
-			}
-		}
-		return field;
-	}
-
-	@Override
-	public void updateRequest(TestExec testExec, Request request) {
-		Transaction t = procesaTransaccion(INTLBuilder.buildRequestINTL11SinAutenticacion(), request.getBodyAsString());
-		request.setBody(convierteTransaccion(t));
-		request.setOperation(t.getName());
-		//super.updateRequest(testExec, request);
-		System.out.println(request.getBodyAsString());
-	}
-
-	@Override
-	public void updateResponse(TestExec testExec, Response response) {
-		Transaction t = procesaTransaccion(INTLBuilder.buildResponseINTL11SinAutenticacion(), response.getBodyAsString());
-		System.out.println("Response before: " + response.getBodyAsString());
-		response.setBody(convierteTransaccion(t));
-		response.setBinary(false);
-		System.out.println("Response after: " + response.getBodyAsString());
-	}
-
-	@Override
-	public void updateResponse(TestExec testExec, TransientResponse response) {
-		Transaction t = procesaTransaccion(INTLBuilder.buildResponseINTL11SinAutenticacion(), response.getBodyAsString());
-		System.out.println("Response before: " + response.getBodyAsString());
-		response.setBody(convierteTransaccion(t));
-		response.setBinary(false);
-		System.out.println("Response after: " + response.getBodyAsString());
-	}
-	
-	private String convierteTransaccion(Transaction t) {
+	private String requestMessageToXML(RequestMessage requestMessage) {
 		String xmlBody = null;
 		try {
-			JAXBContext jaxbContext = JAXBContext.newInstance(Transaction.class, Section.class);
+			JAXBContext jaxbContext = JAXBContext.newInstance(RequestMessage.class, RequestSection.class, MessageField.class);
 			
 			StringWriter sw = new StringWriter();
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 			
-			JAXBElement<Transaction> jaxbElement = new JAXBElement<Transaction>(new QName(null, t.getName()), Transaction.class, t);
+			JAXBElement<RequestMessage> jaxbElement = new JAXBElement<RequestMessage>(new QName(null, requestMessage.getName()), RequestMessage.class, requestMessage);
 			
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
 			jaxbMarshaller.marshal(jaxbElement, sw);
-
+			
 			xmlBody = sw.toString();
 		} catch (JAXBException e) {
 			e.printStackTrace();
@@ -142,19 +45,91 @@ public class BuroDeCreditoInt11Handler extends DataProtocol {
 		return xmlBody;
 	}
 	
-	public static void main(String[] args) {
-		BuroDeCreditoInt11Handler handler = new BuroDeCreditoInt11Handler(); 
-		String stringHeader = "INTL110014000015265000101540001007MX0000ZM11001008VASmuDecICCMX000000000SP01     0000000PN05AVINA0016NO PROPORCIONADO0211ROSA ALICIA0513ROVE521205QWQPA1827 SUR 1111 123 NA0106CENTRO0221ZIHUATANEJO DE AZUETA0306MEXICO0403GRO0505408801001HES05002520002**";
-		Transaction t = handler.procesaTransaccion(INTLBuilder.buildRequestINTL11SinAutenticacion(), stringHeader);
+	private String responseMessageToXML(ResponseMessage responseMessage) {
+		String xmlBody = null;
 		try {
-			JAXBContext jaxbContext = JAXBContext.newInstance(Transaction.class, Section.class);
+			JAXBContext jaxbContext = JAXBContext.newInstance(ResponseMessage.class, ResponseSection.class, ResponseField.class);
+			
+			StringWriter sw = new StringWriter();
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-			JAXBElement<Transaction> jaxbElement = new JAXBElement<Transaction>(new QName(null, t.getName()), Transaction.class, t);
+
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			jaxbMarshaller.marshal(jaxbElement, System.out);
+			jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+			jaxbMarshaller.marshal(responseMessage, sw);
+			
+			xmlBody = sw.toString();
 		} catch (JAXBException e) {
 			e.printStackTrace();
 		}
+		return xmlBody;
+	}
+	
+	private ResponseMessage xmlToResponseMessage(String xml) {
+		ResponseMessage responseMessage  = null;
+		try {
+			JAXBContext jaxbContext = JAXBContext.newInstance(ResponseMessage.class, ResponseSection.class, ResponseField.class);
+			StringReader sr = new StringReader(xml);
+			Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+			responseMessage = (ResponseMessage) unmarshaller.unmarshal(sr);
+			return responseMessage;
+		} catch (JAXBException e) {
+			e.printStackTrace();
+		}
+		return responseMessage;
+	}
+
+	@Override
+	public void updateRequest(TestExec testExec, Request request) {
+		MessageProcessor messageProcessor = new MessageProcessor();
+		messageProcessor.setMessageFactory(new RequestMessageFactory());
 		
+		Message requestMessage = messageProcessor.processMessage(INTLBuilder.buildRequestINTL11SinAutenticacion(), request.getBodyAsString());
+		request.setBody(requestMessageToXML((RequestMessage)requestMessage));
+		request.setOperation(requestMessage.getName());
+		System.out.println(request.getBodyAsString());
+	}
+
+	@Override
+	public void updateResponse(TestExec testExec, Response response) {
+		MessageProcessor messageProcessor = new MessageProcessor();
+		messageProcessor.setMessageFactory(new RequestMessageFactory());
+		
+		Message responseMessage = messageProcessor.processMessage(INTLBuilder.buildResponseINTL11SinAutenticacion(), response.getBodyAsString());
+		System.out.println("Response before: " + response.getBodyAsString());
+		response.setBody(responseMessageToXML((ResponseMessage)responseMessage));
+		response.setBinary(false);
+		System.out.println("Response after: " + response.getBodyAsString());
+	}
+
+//	@Override
+//	public void updateResponse(TestExec testExec, TransientResponse response) {
+//		Transaction t = procesaTransaccion(INTLBuilder.buildResponseINTL11SinAutenticacion(), response.getBodyAsString());
+//		System.out.println("Response before: " + response.getBodyAsString());
+//		response.setBody(convierteTransaccion(t));
+//		response.setBinary(false);
+//		System.out.println("Response after: " + response.getBodyAsString());
+//	}
+	
+	public static void main(String[] args) {
+		BuroDeCreditoInt11Handler handler = new BuroDeCreditoInt11Handler();
+		
+		MessageProcessor messageProcessor = new MessageProcessor();
+		messageProcessor.setMessageFactory(new RequestMessageFactory());
+
+		String stringHeader = "INTL110014000015265000101540001007MX0000ZM11001008VASmuDecICCMX000000000SP01     0000000PN05AVINA0016NO PROPORCIONADO0211ROSA ALICIA0513ROVE521205QWQPA1827 SUR 1111 123 NA0106CENTRO0221ZIHUATANEJO DE AZUETA0306MEXICO0403GRO0505408801001HES05002520002**";
+		
+		Message requestMessage = messageProcessor.processMessage(INTLBuilder.buildRequestINTL11SinAutenticacion(), stringHeader);
+		System.out.println(handler.requestMessageToXML((RequestMessage)requestMessage));
+		
+		stringHeader = "INTL110014000015264000101100001MX0000ZM1100100800PN06FLORES0005GOMEZ0205JESUS0308SALVADOR0513GALF600331WKIPA28RCDA DE OLIVOS 3 D 456K 123Q0203ZAC0403ZAC0505980601001H120822092015IQ08220920150110ZM110010080215BANCO SANTANDER0402CC060100701I0801YRS08220920150002000102000202000302000402000502000602000702000802000904000010040000110400001204000013040000140400001502001602001701Y1805NNNNN1901N310200320200330200340800000000350800000000360200370800000000380200390800000000400200410800000000SC08BC SCORE00030070104-009ES050054000097578416490102**";
+		
+		messageProcessor.setMessageFactory(new ResponseMessageFactory());
+		
+		Message responseMessage = messageProcessor.processMessage(INTLBuilder.buildResponseINTL11SinAutenticacion(), stringHeader);
+		stringHeader = (handler.responseMessageToXML((ResponseMessage) responseMessage));
+		System.out.println(stringHeader);	
+		responseMessage = handler.xmlToResponseMessage(stringHeader);
+		stringHeader = (handler.responseMessageToXML((ResponseMessage) responseMessage));
+		System.out.println(stringHeader);
 	}
 }
