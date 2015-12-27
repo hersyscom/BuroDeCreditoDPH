@@ -92,7 +92,7 @@ public class BuroDeCreditoInt11Handler extends DataProtocol {
 	@Override
 	public void updateResponse(TestExec testExec, Response response) {
 		MessageProcessor messageProcessor = new MessageProcessor();
-		messageProcessor.setMessageFactory(new RequestMessageFactory());
+		messageProcessor.setMessageFactory(new ResponseMessageFactory());
 		
 		Message responseMessage = messageProcessor.processMessage(INTLBuilder.buildResponseINTL11SinAutenticacion(), response.getBodyAsString());
 		System.out.println("Response before: " + response.getBodyAsString());
