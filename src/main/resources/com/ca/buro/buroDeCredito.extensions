@@ -1,6 +1,2 @@
-# File start
-# LISA Extensions file
 vseProtocols=com.ca.buro.BuroDeCreditoInt11Handler
 com.ca.buro.BuroDeCreditoInt11Handler=data:req:resp,INTLBuroDeCreditoXML
-# My Data Protocol Handler is something that you'll see under the DPH selection window in LISA UI/recorder
-# File end
