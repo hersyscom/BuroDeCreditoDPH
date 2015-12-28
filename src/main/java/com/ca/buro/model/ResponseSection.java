@@ -21,7 +21,6 @@ public class ResponseSection extends MessageSection {
 
     @Override
 	public void setName(String name) {
-		// TODO Auto-generated method stub
 		super.setName(name);
 	}
 
