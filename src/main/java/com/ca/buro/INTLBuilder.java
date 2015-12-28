@@ -39,19 +39,28 @@ public class INTLBuilder {
 		} catch (JAXBException e) {
 		}
 		templates.put(INTL_SIN_AUTENTICACION_REQUEST, xmlToTemplate(INTL_SIN_AUTENTICACION_REQUEST_FILE));
+		if(logger.isDebugEnabled()) {
+			logger.debug(templateToXML(templates.get(INTL_SIN_AUTENTICACION_REQUEST)));
+		}
 		templates.put(INTL_SIN_AUTENTICACION_RESPONSE, xmlToTemplate(INTL_SIN_AUTENTICACION_RESPONSE_FILE));
+		if(logger.isDebugEnabled()) {
+			logger.debug(templateToXML(templates.get(INTL_SIN_AUTENTICACION_RESPONSE)));
+		}
 	}
 	
-	private void templateToXML(Template template) {
+	private String templateToXML(Template template) {
+		String xmlString = null;
 		try {
 			StringWriter sw = new StringWriter();
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 			jaxbMarshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
 			jaxbMarshaller.marshal(template, sw);
+			xmlString = sw.toString();
 		} catch (JAXBException e) {
 			logger.error(TEMPLATE_TO_XML_ERROR, e);
 		}
+		return xmlString;
 	}
 	
 	private Template xmlToTemplate(String fileName) {

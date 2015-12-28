@@ -68,15 +68,12 @@ public class MessageProcessor {
 	
 	private MessageField processMessageFieldLabelIncluded(String body, final Field field, Apuntador apuntador) {
 		MessageField messageField = null;
-		System.out.println("Posicion actual: " + apuntador.getPosicion());
 		if((apuntador.getPosicion() + LABEL_LENGTH) < body.length()) {
 			String fieldLabel = body.substring(apuntador.getPosicion(), apuntador.getPosicion() + LABEL_LENGTH);
-			System.out.println("Campo: " + fieldLabel);
 			if(field.getName().equalsIgnoreCase("Campo-" + fieldLabel)) {
 				messageField = messageFactory.createField();
 				messageField.setName(field.getName());
 				int length = Integer.parseInt(body.substring(apuntador.getPosicion() + LABEL_LENGTH, apuntador.getPosicion() + LABEL_LENGTH + FIELD_SIZE_LENGTH));
-				System.out.println("Longitud: " + length);
 				String fieldValue = body.substring(apuntador.getPosicion() + LABEL_LENGTH + FIELD_SIZE_LENGTH, apuntador.getPosicion() + LABEL_LENGTH + FIELD_SIZE_LENGTH + length);	
 				apuntador.setPosicion(apuntador.getPosicion() + LABEL_LENGTH + FIELD_SIZE_LENGTH + length);
 				messageField.setValue(fieldValue);

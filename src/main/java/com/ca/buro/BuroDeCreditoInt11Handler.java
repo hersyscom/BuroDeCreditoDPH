@@ -27,7 +27,7 @@ import com.itko.lisa.vse.stateful.protocol.DataProtocol;
 
 public class BuroDeCreditoInt11Handler extends DataProtocol {
 	
-	private final Logger logger = LoggerFactory.getLogger(BuroDeCreditoInt11Handler.class);
+	private static final Logger logger = LoggerFactory.getLogger(BuroDeCreditoInt11Handler.class);
 	private static final String REQUEST_TO_XML_ERROR = "Error al convertir la peticion a XML.";
 	private static final String RESPONSE_TO_XML_ERROR = "Error al convertir la respuesta a XML.";
 	private static final String XML_TO_RESPONSE_ERROR = "Error al convertir el documento XML a respuesta";
@@ -96,7 +96,6 @@ public class BuroDeCreditoInt11Handler extends DataProtocol {
 		Message requestMessage = messageProcessor.processMessage(intlBuilder.buildRequestINTL11SinAutenticacion(), request.getBodyAsString());
 		request.setBody(requestMessageToXML((RequestMessage)requestMessage));
 		request.setOperation(requestMessage.getName());
-		System.out.println(request.getBodyAsString());
 	}
 
 	@Override
@@ -112,10 +111,8 @@ public class BuroDeCreditoInt11Handler extends DataProtocol {
 //	@Override
 //	public void updateResponse(TestExec testExec, TransientResponse response) {
 //		Transaction t = procesaTransaccion(INTLBuilder.buildResponseINTL11SinAutenticacion(), response.getBodyAsString());
-//		System.out.println("Response before: " + response.getBodyAsString());
 //		response.setBody(convierteTransaccion(t));
 //		response.setBinary(false);
-//		System.out.println("Response after: " + response.getBodyAsString());
 //	}
 	
 	public static void main(String[] args) {
@@ -127,7 +124,7 @@ public class BuroDeCreditoInt11Handler extends DataProtocol {
 		String stringHeader = "INTL110014000015265000101540001007MX0000ZM11001008VASmuDecICCMX000000000SP01     0000000PN05AVINA0016NO PROPORCIONADO0211ROSA ALICIA0513ROVE521205QWQPA1827 SUR 1111 123 NA0106CENTRO0221ZIHUATANEJO DE AZUETA0306MEXICO0403GRO0505408801001HES05002520002**";
 		
 		Message requestMessage = messageProcessor.processMessage(handler.intlBuilder.buildRequestINTL11SinAutenticacion(), stringHeader);
-		System.out.println(handler.requestMessageToXML((RequestMessage)requestMessage));
+		logger.debug(handler.requestMessageToXML((RequestMessage)requestMessage));
 		
 		stringHeader = "INTL110014000015264000101100001MX0000ZM1100100800PN06FLORES0005GOMEZ0205JESUS0308SALVADOR0513GALF600331WKIPA28RCDA DE OLIVOS 3 D 456K 123Q0203ZAC0403ZAC0505980601001H120822092015IQ08220920150110ZM110010080215BANCO SANTANDER0402CC060100701I0801YRS08220920150002000102000202000302000402000502000602000702000802000904000010040000110400001204000013040000140400001502001602001701Y1805NNNNN1901N310200320200330200340800000000350800000000360200370800000000380200390800000000400200410800000000SC08BC SCORE00030070104-009ES050054000097578416490102**";
 		
@@ -135,9 +132,9 @@ public class BuroDeCreditoInt11Handler extends DataProtocol {
 		
 		Message responseMessage = messageProcessor.processMessage(handler.intlBuilder.buildResponseINTL11SinAutenticacion(), stringHeader);
 		stringHeader = (handler.responseMessageToXML((ResponseMessage) responseMessage));
-		System.out.println(stringHeader);	
+		logger.debug(stringHeader);	
 		responseMessage = handler.xmlToResponseMessage(stringHeader);
 		stringHeader = (handler.responseMessageToXML((ResponseMessage) responseMessage));
-		System.out.println(stringHeader);
+		logger.debug(stringHeader);
 	}
 }
