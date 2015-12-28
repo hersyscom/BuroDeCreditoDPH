@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<plantilla>
+    <nombre>INTL11SinAutenticacion</nombre>
+    <secciones>
+        <seccion>
+            <identificador>seccionINTL</identificador>
+            <seIncluyenEtiquetas>false</seIncluyenEtiquetas>
+            <campos>
+                <campo>
+                    <nombre>Etiqueta</nombre>
+                    <longitud>4</longitud>
+                </campo>
+                <campo>
+                    <nombre>Version</nombre>
+                    <longitud>2</longitud>
+                </campo>
+            </campos>
+        </seccion>
+    </secciones>
+</plantilla>
